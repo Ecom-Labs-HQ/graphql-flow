@@ -1,6 +1,7 @@
 {
     "name": "@ecom-labs/graphql-flow",
     "version": "0.1.0",
+    "type": "module",
     "scripts": {
         "format": "prettier --write .",
         "format:check": "prettier --check .",
