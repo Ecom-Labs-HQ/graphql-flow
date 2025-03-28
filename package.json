@@ -2,9 +2,12 @@
     "name": "@ecom-labs/graphql-flow",
     "version": "0.1.0",
     "scripts": {
+        "format": "prettier --write .",
+        "format:check": "prettier --check .",
         "build": "tsc"
     },
     "devDependencies": {
+        "prettier": "^3.5.3",
         "typescript": "^5.8.2"
     }
 }
