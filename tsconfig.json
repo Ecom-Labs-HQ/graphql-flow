@@ -1,0 +1,49 @@
+{
+    "$schema": "https://json.schemastore.org/tsconfig",
+    "compilerOptions": {
+        "outDir": "dist",
+
+        /* Force require() for CommonJS and import for ESM */
+        "verbatimModuleSyntax": true,
+
+        /* Import CommonJS modules more easily */
+        "allowSyntheticDefaultImports": true,
+        "esModuleInterop": true,
+
+        /* Do not check the .d.ts files of dependencies */
+        "skipLibCheck": true,
+
+        /* Make sure that each file can be transpiled on its own */
+        "isolatedModules": true,
+
+        /* Specifies the version of the outputted Javascript code */
+        "target": "ES2022",
+
+        /* Treat every file as a module, even if no imports/exports present */
+        "moduleDetection": "force",
+
+        /* Allow the import of Javascript and JSON files */
+        "allowJs": true,
+        "resolveJsonModule": true,
+
+        /* Make sure that the modules are compatible with node */
+        "moduleResolution": "NodeNext",
+        "module": "NodeNext",
+
+        /* Add strictness to code */
+        "noFallthroughCasesInSwitch": true,
+        "noUncheckedIndexedAccess": true,
+        "noImplicitOverride": true,
+        "strict": true,
+
+        /* Emit extra files for types and vscode */
+        "declaration": true,
+        "declarationMap": true,
+        "sourceMap": true,
+
+        /* Other useful settings */
+        "removeComments": true
+    },
+    "include": ["src"],
+    "exclude": ["node_modules", "dist"]
+}
