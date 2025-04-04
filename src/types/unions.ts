@@ -17,5 +17,5 @@ export function generateUnionType(unionType: GraphQLUnionType): string {
 
     const description = generateTypeComment(unionType.description);
 
-    return `${description}\ntype ${unionName} = ${unionDefinition}`;
+    return `${description}\nexport type ${unionName} = ${unionDefinition}`;
 }
