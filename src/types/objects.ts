@@ -34,5 +34,5 @@ export function generateObjectType(objectType: GraphQLObjectType): string {
 
     const typeComment = generateTypeComment(objectType.description);
 
-    return `${typeComment}\ntype ${typeName} = {\n${fieldDefinitions.join("\n\n")}\n}${interfaceExtensions}`;
+    return `${typeComment}\nexport type ${typeName} = {\n${fieldDefinitions.join("\n\n")}\n}${interfaceExtensions}`;
 }

@@ -32,5 +32,5 @@ export function generateInputObjectType(inputObjectType: GraphQLInputObjectType)
 
     const typeComment = generateTypeComment(inputObjectType.description);
 
-    return `${typeComment}\ntype ${typeName} = {\n${fieldDefinitions.join("\n\n")}\n}`;
+    return `${typeComment}\nexport type ${typeName} = {\n${fieldDefinitions.join("\n\n")}\n}`;
 }
