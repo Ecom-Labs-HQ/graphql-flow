@@ -27,7 +27,7 @@ export function generateMutationInputs(schema: GraphQLSchema) {
         const mutationInput = mutation.args;
 
         if (mutationInput.length === 0) {
-            const inlineType = `export type ${mutationName}MutationInput = Record<string, never>;`;
+            const inlineType = `export type ${mutationName}Input = Record<string, never>;`;
 
             mutationInputTypes.push(inlineType);
             continue;
@@ -46,7 +46,7 @@ export function generateMutationInputs(schema: GraphQLSchema) {
             return `${fieldComment}\n    ${fieldDefinition}`;
         });
 
-        const generatedType = `export type ${mutationName}MutationInput = {\n${fieldDefinitions.join("\n\n")}\n};`;
+        const generatedType = `export type ${mutationName}Input = {\n${fieldDefinitions.join("\n\n")}\n};`;
 
         mutationInputTypes.push(generatedType);
     }
