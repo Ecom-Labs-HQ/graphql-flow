@@ -20,5 +20,5 @@ export function generateEnumType(enumType: GraphQLEnumType): string {
 
     const description = generateTypeComment(enumType.description);
 
-    return `${description}\nexport type ${enumName} = \n${unionType}`;
+    return `${description}\nexport type ${enumName} = ${unionType}`;
 }
