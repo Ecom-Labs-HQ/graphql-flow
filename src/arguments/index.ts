@@ -27,7 +27,7 @@ export function generateQueryArguments(schema: GraphQLSchema) {
         const queryArguments = query.args;
 
         if (queryArguments.length === 0) {
-            const inlineType = `export type ${queryName}QueryArguments = Record<string, never>;`;
+            const inlineType = `export type ${queryName}Arguments = Record<string, never>;`;
 
             queryArgumentTypes.push(inlineType);
             continue;
@@ -46,7 +46,7 @@ export function generateQueryArguments(schema: GraphQLSchema) {
             return `${fieldComment}\n    ${fieldDefinition}`;
         });
 
-        const generatedType = `export type ${queryName}QueryArguments = {\n${fieldDefinitions.join("\n\n")}\n};`;
+        const generatedType = `export type ${queryName}Arguments = {\n${fieldDefinitions.join("\n\n")}\n};`;
 
         queryArgumentTypes.push(generatedType);
     }
