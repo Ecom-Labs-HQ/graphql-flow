@@ -5,6 +5,7 @@ import { buildSchema } from "graphql";
 import { program } from "commander";
 import { generateSchemaTypes } from "./types/index.js";
 import { generateQueryArguments } from "./arguments/index.js";
+import { generateMutationInputs } from "./inputs/index.js";
 
 program
     .version("1.0.0")
@@ -26,6 +27,10 @@ program
         /* Generate the query argument types */
         const generatedQueryArguments = generateQueryArguments(schema);
         fs.writeFileSync(options.output + "query-arguments.ts", generatedQueryArguments);
+
+        /* Generate the mutation input types */
+        const generatedMutationInputs = generateMutationInputs(schema);
+        fs.writeFileSync(options.output + "mutation-arguments.ts", generatedMutationInputs);
     });
 
 program.parse(process.argv);
