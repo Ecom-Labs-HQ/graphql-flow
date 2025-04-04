@@ -1,5 +1,5 @@
 /**
- * When generating an object key type, we need to check if it is nullable or an array. Ff so, we
+ * When generating an object key type, we need to check if it is nullable or an array. If so, we
  * need to return the type along with the correct modifiers.
  */
 
