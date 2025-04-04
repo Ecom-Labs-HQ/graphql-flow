@@ -7,6 +7,7 @@
  */
 
 import { isNonNullType } from "graphql";
+import { capitalize } from "../utils/capitalize.js";
 import { generateFieldType } from "../types/field-types.js";
 import { generateTypeComment } from "../utils/generate-comment.js";
 import type { GraphQLSchema } from "graphql";
@@ -22,7 +23,7 @@ export function generateQueryArguments(schema: GraphQLSchema) {
     const queryArgumentTypes: string[] = [];
 
     for (const query of Object.values(allQueries)) {
-        const queryName = query.name;
+        const queryName = capitalize(query.name);
         const queryArguments = query.args;
 
         if (queryArguments.length === 0) {
