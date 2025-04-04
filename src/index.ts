@@ -6,6 +6,7 @@ import { program } from "commander";
 import { generateSchemaTypes } from "./types/index.js";
 import { generateQueryArguments } from "./arguments/index.js";
 import { generateMutationInputs } from "./inputs/index.js";
+import { generateSelectionTypes } from "./selection/index.js";
 
 program
     .version("1.0.0")
@@ -31,6 +32,10 @@ program
         /* Generate the mutation input types */
         const generatedMutationInputs = generateMutationInputs(schema);
         fs.writeFileSync(options.output + "mutation-inputs.ts", generatedMutationInputs);
+
+        /* Generate the selection types */
+        const generatedSelectionTypes = generateSelectionTypes(schema);
+        fs.writeFileSync(options.output + "selection-types.ts", generatedSelectionTypes);
     });
 
 program.parse(process.argv);
