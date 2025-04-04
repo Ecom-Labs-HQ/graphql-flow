@@ -30,7 +30,7 @@ program
 
         /* Generate the mutation input types */
         const generatedMutationInputs = generateMutationInputs(schema);
-        fs.writeFileSync(options.output + "mutation-arguments.ts", generatedMutationInputs);
+        fs.writeFileSync(options.output + "mutation-inputs.ts", generatedMutationInputs);
     });
 
 program.parse(process.argv);
