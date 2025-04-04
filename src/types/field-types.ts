@@ -7,7 +7,7 @@ import { generateScalarType } from "./scalars.js";
 import { isListType, isNonNullType, isScalarType } from "graphql";
 import type { GraphQLInputType, GraphQLOutputType } from "graphql";
 
-export function generateFieldType(type: GraphQLInputType | GraphQLOutputType) {
+export function generateFieldType(type: GraphQLInputType | GraphQLOutputType, typePrefix?: string) {
     /* Strip the type of any modifiers and store them in variables */
 
     let isArrayType = false;
@@ -40,7 +40,7 @@ export function generateFieldType(type: GraphQLInputType | GraphQLOutputType) {
     } else if (isScalarType(currentType)) {
         typescriptType = generateScalarType(currentType);
     } else {
-        typescriptType = currentType.name;
+        typescriptType = typePrefix ? `${typePrefix}.${currentType.name}` : currentType.name;
     }
 
     /* Apply the modifiers to the type, if any */
