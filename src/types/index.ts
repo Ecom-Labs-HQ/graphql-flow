@@ -55,7 +55,6 @@ export function generateSchemaTypes(schema: GraphQLSchema) {
     const fileHeaders = [
         "/* File auto-generated using [graphql-flow](https://github.com/ecom-labs-hq/graphql-flow) */",
         "/* eslint-disable @typescript-eslint/no-explicit-any */",
-        "",
     ];
 
     return [...fileHeaders, ...generatedTypes].join("\n\n");
