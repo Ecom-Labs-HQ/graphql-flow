@@ -67,11 +67,13 @@ export function generateUnionSelection(schema: GraphQLSchema, unionType: GraphQL
         const fieldComment = generateTypeComment(field.description);
         const fieldSelection = generateFieldSelection(schema, field);
 
-        return `${fieldComment}\n        ${fieldSelection}`;
+        return `${fieldComment}\n${fieldSelection}`;
     });
 
-    /* Generate the member-specific selections using the already created types */
+    const typenameField = `__typename?: true`;
+    sharedFieldDefinitions.unshift(typenameField);
 
+    /* Generate the member-specific selections using the already created types */
     const memberSelectionTypes = memberTypes.map((memberType) => {
         return `"... on ${memberType.name}"?: ${memberType.name}Selection`;
     });

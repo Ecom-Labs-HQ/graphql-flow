@@ -24,8 +24,11 @@ export function generateObjectSelection(
         const fieldComment = generateTypeComment(field.description);
         const fieldSelection = generateFieldSelection(schema, field);
 
-        return `${fieldComment}\n        ${fieldSelection}`;
+        return `${fieldComment}\n${fieldSelection}`;
     });
+
+    const typenameField = ` __typename?: true`;
+    fieldDefinitions.unshift(typenameField);
 
     const interfaceExtensions =
         implementedInterfaces.length > 0
