@@ -13,13 +13,13 @@ export type CreatedGraphQLMutation = {
 export function buildGraphQLMutation(
     mutationName: string,
     argumentMap: Record<string, string>,
-    { data, select }: MutationArgs
+    { data, select }: MutationArgs<object, object | true>
 ): CreatedGraphQLMutation {
     const fieldSelection = buildGraphqlFields(select);
 
     if (!data || Object.values(data).length === 0) {
         return {
-            query: `mutation ${mutationName} { ${mutationName} { ${fieldSelection} } }`,
+            query: `mutation ${mutationName} { ${mutationName} ${fieldSelection} }`,
         };
     }
 
@@ -32,7 +32,7 @@ export function buildGraphQLMutation(
         .join(", ");
 
     return {
-        query: `mutation ${mutationName}(${variableDefinitions}) { ${mutationName}(${argumentString}) { ${fieldSelection} } }`,
+        query: `mutation ${mutationName}(${variableDefinitions}) { ${mutationName}(${argumentString}) ${fieldSelection} }`,
         variables: data,
     };
 }

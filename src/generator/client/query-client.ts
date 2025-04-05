@@ -3,8 +3,9 @@
  */
 
 import { capitalize } from "../../utils/capitalize.js";
-import { getTypeName } from "../utils/type-name.js";
 import { generateTypeComment } from "../utils/generate-comment.js";
+import { getSelectionTypeName } from "../utils/selection-type-name.js";
+import { generateFieldType } from "../types/field-types.js";
 import type { GraphQLSchema } from "graphql";
 
 const wrapperCode = `
@@ -42,10 +43,10 @@ export function generateQueryClient(schema: GraphQLSchema) {
         const queryName = capitalize(query.name);
         const queryDescription = generateTypeComment(query.description);
 
-        const querySelectionType = getTypeName(query.type, "SelectionTypes");
-        const queryReturnType = getTypeName(query.type, "BaseTypes");
+        const querySelectionType = getSelectionTypeName(query.type);
+        const queryReturnType = generateFieldType(query.type, "BaseTypes");
 
-        const generatedType = `${queryDescription}\npublic async ${query.name}<TSelection extends ${querySelectionType}Selection>(queryArgs: QueryArgs<QueryArguments.${queryName}Arguments, TSelection>): Promise<GraphQLApiResponse<OperationReturnType<${queryReturnType}, TSelection>>> {\nconst generatedQuery = buildGraphQLQuery("${query.name}", ArgumentMaps.${query.name}ArgumentMap, queryArgs);\nreturn await sendRequest<OperationReturnType<${queryReturnType}, TSelection>>(this.config, generatedQuery);\n};`;
+        const generatedType = `${queryDescription}\npublic async ${query.name}<TSelection extends ${querySelectionType}>(queryArgs: QueryArgs<QueryArguments.${queryName}Arguments, TSelection>): Promise<GraphQLApiResponse<OperationReturnType<${queryReturnType}, TSelection>>> {\nconst generatedQuery = buildGraphQLQuery("${query.name}", ArgumentMaps.${query.name}ArgumentMap, queryArgs);\nreturn await sendRequest<OperationReturnType<${queryReturnType}, TSelection>>(this.config, generatedQuery);\n};`;
 
         generatedQueryMethods.push(generatedType);
     }

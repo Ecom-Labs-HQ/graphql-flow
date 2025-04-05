@@ -2,7 +2,11 @@
  * Turn the selected fields into a GraphQL object selection
  */
 
-export function buildGraphqlFields(selection: object): string {
+export function buildGraphqlFields(selection: object | true): string {
+    if (selection === true) {
+        return "";
+    }
+
     const selectedFields: string[] = [];
 
     for (const [field, value] of Object.entries(selection)) {
@@ -14,5 +18,5 @@ export function buildGraphqlFields(selection: object): string {
         }
     }
 
-    return selectedFields.join(" ");
+    return `{ ${selectedFields.join(" ")} }`;
 }
