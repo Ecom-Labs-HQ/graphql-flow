@@ -26,10 +26,12 @@ export function generateInterfaceSelection(
         const fieldComment = generateTypeComment(field.description);
         const fieldSelection = generateFieldSelection(schema, field);
 
-        return `${fieldComment}\n        ${fieldSelection}`;
+        return `${fieldComment}\n${fieldSelection}`;
     });
 
-    // Handle inherited interfaces
+    const typenameField = `__typename?: true`;
+    fieldDefinitions.unshift(typenameField);
+
     const interfaceExtensions =
         implementedInterfaces.length > 0
             ? " & " + implementedInterfaces.map((i) => i.name + "Selection").join(" & ")
