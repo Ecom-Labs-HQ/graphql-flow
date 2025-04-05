@@ -5,7 +5,6 @@
  * when creating the mutation variables.
  */
 
-import { capitalize } from "../../utils/capitalize.js";
 import { generateTypeComment } from "../utils/generate-comment.js";
 import type { GraphQLSchema } from "graphql";
 
@@ -20,11 +19,10 @@ export function generateInputMaps(schema: GraphQLSchema) {
     const mutationInputTypes: string[] = [];
 
     for (const mutation of Object.values(allMutations)) {
-        const mutationName = capitalize(mutation.name);
         const mutationInput = mutation.args;
 
         if (mutationInput.length === 0) {
-            const inlineType = `export const ${mutationName}InputMap = {}`;
+            const inlineType = `export const ${mutation.name}InputMap = {}`;
 
             mutationInputTypes.push(inlineType);
             continue;
@@ -40,7 +38,7 @@ export function generateInputMaps(schema: GraphQLSchema) {
             return `${fieldComment}\n    ${fieldDefinition}`;
         });
 
-        const generatedType = `export const ${mutationName}InputMap = {\n${fieldDefinitions.join("\n\n")}\n};`;
+        const generatedType = `export const ${mutation.name}InputMap = {\n${fieldDefinitions.join("\n\n")}\n};`;
 
         mutationInputTypes.push(generatedType);
     }
