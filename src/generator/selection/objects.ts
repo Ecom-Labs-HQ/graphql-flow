@@ -10,17 +10,19 @@
 
 import { generateFieldSelection } from "./field-selections.js";
 import { generateTypeComment } from "../utils/generate-comment.js";
-import type { GraphQLObjectType } from "graphql";
+import type { GraphQLObjectType, GraphQLSchema } from "graphql";
 
-export function generateObjectSelection(objectType: GraphQLObjectType): string {
+export function generateObjectSelection(
+    schema: GraphQLSchema,
+    objectType: GraphQLObjectType
+): string {
     const typeName = objectType.name;
-
     const implementedInterfaces = objectType.getInterfaces();
     const fields = objectType.getFields();
 
     const fieldDefinitions = Object.values(fields).map((field) => {
         const fieldComment = generateTypeComment(field.description);
-        const fieldSelection = generateFieldSelection(field);
+        const fieldSelection = generateFieldSelection(schema, field);
 
         return `${fieldComment}\n        ${fieldSelection}`;
     });
