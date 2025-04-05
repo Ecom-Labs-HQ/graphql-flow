@@ -5,7 +5,6 @@
  * when creating the query variables.
  */
 
-import { capitalize } from "../../utils/capitalize.js";
 import { generateTypeComment } from "../utils/generate-comment.js";
 import type { GraphQLSchema } from "graphql";
 
@@ -20,11 +19,10 @@ export function generateArgumentMaps(schema: GraphQLSchema) {
     const queryArgumentTypes: string[] = [];
 
     for (const query of Object.values(allQueries)) {
-        const queryName = capitalize(query.name);
         const queryArguments = query.args;
 
         if (queryArguments.length === 0) {
-            const inlineType = `export const ${queryName}ArgumentMap = {};`;
+            const inlineType = `export const ${query.name}ArgumentMap = {};`;
 
             queryArgumentTypes.push(inlineType);
             continue;
@@ -40,7 +38,7 @@ export function generateArgumentMaps(schema: GraphQLSchema) {
             return `${fieldComment}\n    ${fieldDefinition}`;
         });
 
-        const generatedType = `export const ${queryName}ArgumentMap = {\n${fieldDefinitions.join("\n\n")}\n};`;
+        const generatedType = `export const ${query.name}ArgumentMap = {\n${fieldDefinitions.join("\n\n")}\n};`;
 
         queryArgumentTypes.push(generatedType);
     }
