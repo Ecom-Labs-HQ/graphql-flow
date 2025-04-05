@@ -13,13 +13,13 @@ export type CreatedGraphQLQuery = {
 export function buildGraphQLQuery(
     queryName: string,
     argumentMap: Record<string, string>,
-    { args, select }: QueryArgs
+    { args, select }: QueryArgs<object, object | true>
 ): CreatedGraphQLQuery {
     const fieldSelection = buildGraphqlFields(select);
 
     if (!args || Object.values(args).length === 0) {
         return {
-            query: `query ${queryName} { ${queryName} { ${fieldSelection} } } `,
+            query: `query ${queryName} { ${queryName} ${fieldSelection} `,
         };
     }
 
@@ -32,7 +32,7 @@ export function buildGraphQLQuery(
         .join(", ");
 
     return {
-        query: `query ${queryName}(${variableDefinitions}) { ${queryName}(${argumentString}) { ${fieldSelection} } }`,
+        query: `query ${queryName}(${variableDefinitions}) { ${queryName}(${argumentString}) ${fieldSelection} }`,
         variables: args,
     };
 }

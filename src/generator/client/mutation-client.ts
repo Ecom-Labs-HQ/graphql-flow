@@ -3,8 +3,9 @@
  */
 
 import { capitalize } from "../../utils/capitalize.js";
-import { getTypeName } from "../utils/type-name.js";
 import { generateTypeComment } from "../utils/generate-comment.js";
+import { getSelectionTypeName } from "../utils/selection-type-name.js";
+import { generateFieldType } from "../types/field-types.js";
 import type { GraphQLSchema } from "graphql";
 
 const wrapperCode = `
@@ -42,10 +43,10 @@ export function generateMutationClient(schema: GraphQLSchema) {
         const mutationName = capitalize(mutation.name);
         const mutationDescription = generateTypeComment(mutation.description);
 
-        const mutationSelectionType = getTypeName(mutation.type, "SelectionTypes");
-        const mutationReturnType = getTypeName(mutation.type, "BaseTypes");
+        const mutationSelectionType = getSelectionTypeName(mutation.type);
+        const mutationReturnType = generateFieldType(mutation.type, "BaseTypes");
 
-        const generatedType = `${mutationDescription}\npublic async ${mutation.name}<TSelection extends ${mutationSelectionType}Selection>(mutationArgs: MutationArgs<MutationInputs.${mutationName}Input, TSelection>): Promise<GraphQLApiResponse<OperationReturnType<${mutationReturnType}, TSelection>>> {\nconst generatedMutation = buildGraphQLMutation("${mutation.name}", InputMaps.${mutation.name}InputMap, mutationArgs);\nreturn await sendRequest<OperationReturnType<${mutationReturnType}, TSelection>>(this.config, generatedMutation);\n};`;
+        const generatedType = `${mutationDescription}\npublic async ${mutation.name}<TSelection extends ${mutationSelectionType}>(mutationArgs: MutationArgs<MutationInputs.${mutationName}Input, TSelection>): Promise<GraphQLApiResponse<OperationReturnType<${mutationReturnType}, TSelection>>> {\nconst generatedMutation = buildGraphQLMutation("${mutation.name}", InputMaps.${mutation.name}InputMap, mutationArgs);\nreturn await sendRequest<OperationReturnType<${mutationReturnType}, TSelection>>(this.config, generatedMutation);\n};`;
 
         generatedMutationMethods.push(generatedType);
     }

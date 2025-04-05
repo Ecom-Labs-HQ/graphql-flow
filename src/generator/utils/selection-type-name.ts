@@ -1,13 +1,11 @@
 /**
- * Get the name of the typescript type from the GraphQL type. This can either me a primitive or a
- * custom type generated earlier.
+ * Get the selection type from the GraphQL type. For scalars we simply return true
  */
 
-import { generateScalarType } from "../types/scalars.js";
 import { isListType, isNonNullType, isScalarType } from "graphql";
 import type { GraphQLInputType, GraphQLOutputType } from "graphql";
 
-export function getTypeName(type: GraphQLInputType | GraphQLOutputType, prefix?: string): string {
+export function getSelectionTypeName(type: GraphQLInputType | GraphQLOutputType): string {
     let currentType = type;
 
     if (isNonNullType(currentType)) {
@@ -29,9 +27,9 @@ export function getTypeName(type: GraphQLInputType | GraphQLOutputType, prefix?:
     if (isNonNullType(currentType) || isListType(currentType)) {
         throw new Error("Failed to correctly strip type of modifiers in previous step");
     } else if (isScalarType(currentType)) {
-        typeName = generateScalarType(currentType);
+        return "true";
     } else {
-        typeName = prefix ? `${prefix}.${currentType.name}` : currentType.name;
+        typeName = `SelectionTypes.${currentType.name}Selection`;
     }
 
     return typeName;
