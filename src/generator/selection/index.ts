@@ -34,10 +34,10 @@ export function generateSelectionTypes(schema: GraphQLSchema) {
             const generatedInterfaceType = generateInterfaceSelection(schema, graphqlType);
             generatedTypes.push(generatedInterfaceType);
         } else if (isObjectType(graphqlType)) {
-            const generatedObjectType = generateObjectSelection(graphqlType);
+            const generatedObjectType = generateObjectSelection(schema, graphqlType);
             generatedTypes.push(generatedObjectType);
         } else if (isUnionType(graphqlType)) {
-            const generatedUnionType = generateUnionSelection(graphqlType);
+            const generatedUnionType = generateUnionSelection(schema, graphqlType);
             generatedTypes.push(generatedUnionType);
         } else if (isEnumType(graphqlType)) {
             const inlineType = `export type ${typeName}Selection = true`;

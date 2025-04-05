@@ -53,9 +53,9 @@
 import { generateFieldSelection } from "./field-selections.js";
 import { getSharedUnionFields } from "../utils/shared-union-fields.js";
 import { generateTypeComment } from "../utils/generate-comment.js";
-import type { GraphQLUnionType } from "graphql";
+import type { GraphQLSchema, GraphQLUnionType } from "graphql";
 
-export function generateUnionSelection(unionType: GraphQLUnionType) {
+export function generateUnionSelection(schema: GraphQLSchema, unionType: GraphQLUnionType) {
     const unionName = unionType.name;
     const memberTypes = unionType.getTypes();
 
@@ -65,7 +65,7 @@ export function generateUnionSelection(unionType: GraphQLUnionType) {
 
     const sharedFieldDefinitions = Object.values(sharedFieldsMap).map((field) => {
         const fieldComment = generateTypeComment(field.description);
-        const fieldSelection = generateFieldSelection(field);
+        const fieldSelection = generateFieldSelection(schema, field);
 
         return `${fieldComment}\n        ${fieldSelection}`;
     });
