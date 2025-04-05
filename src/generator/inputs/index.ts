@@ -7,7 +7,7 @@
  */
 
 import { isNonNullType } from "graphql";
-import { capitalize } from "../utils/capitalize.js";
+import { capitalize } from "../../utils/capitalize.js";
 import { generateFieldType } from "../types/field-types.js";
 import { generateTypeComment } from "../utils/generate-comment.js";
 import type { GraphQLSchema } from "graphql";
