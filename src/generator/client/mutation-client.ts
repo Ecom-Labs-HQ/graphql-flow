@@ -2,7 +2,7 @@
  * Generate the mutation client, with all its methods
  */
 
-import { capitalize } from "../utils/capitalize.js";
+import { capitalize } from "../../utils/capitalize.js";
 import { getTypeName } from "../utils/type-name.js";
 import { generateTypeComment } from "../utils/generate-comment.js";
 import type { GraphQLSchema } from "graphql";
