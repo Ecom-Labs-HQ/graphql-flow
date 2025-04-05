@@ -1,3 +1,7 @@
+/**
+ * Capitalize the first letter of a string
+ */
+
 export function capitalize(input: string): string {
     if (!input) {
         return input;
