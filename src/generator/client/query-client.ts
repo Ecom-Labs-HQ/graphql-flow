@@ -8,12 +8,13 @@ import { generateTypeComment } from "../utils/generate-comment.js";
 import type { GraphQLSchema } from "graphql";
 
 const wrapperCode = `
-import { sendRequest } from "./send-request.js";
-import type { GraphQLApiResponse, GraphQLFlowClientConfig, QueryArgs, OperationReturnType } from "./types.js";
+import { sendRequest } from "../runtime/send-request.js";
+import { buildQueryString } from "../runtime/build-query.js";
+import type { GraphQLApiResponse, GraphQLFlowClientConfig, QueryArgs, OperationReturnType } from "../runtime/types.js";
 
-import type * as SelectionTypes from "../selection-types.js";
-import type * as QueryArguments from "../query-arguments.js";
-import type * as Types from "../types.js";
+import type * as SelectionTypes from "../types/selection-types.js";
+import type * as QueryArguments from "../types/query-arguments.js";
+import type * as BaseTypes from "../types/base-types.js";
 
 export class GraphQLFlowQueryClient {
     private readonly config;
@@ -41,9 +42,9 @@ export function generateQueryClient(schema: GraphQLSchema) {
         const queryDescription = generateTypeComment(query.description);
 
         const querySelectionType = getTypeName(query.type, "SelectionTypes");
-        const queryReturnType = getTypeName(query.type, "Types");
+        const queryReturnType = getTypeName(query.type, "BaseTypes");
 
-        const generatedType = `${queryDescription}\npublic async ${query.name}<TSelection extends ${querySelectionType}Selection>(queryArgs: QueryArgs<QueryArguments.${queryName}Arguments, TSelection>): Promise<GraphQLApiResponse<OperationReturnType<${queryReturnType}, TSelection>>> {\nreturn await sendRequest<OperationReturnType<${queryReturnType}, TSelection>>(this.config, queryArgs);\n};`;
+        const generatedType = `${queryDescription}\npublic async ${query.name}<TSelection extends ${querySelectionType}Selection>(queryArgs: QueryArgs<QueryArguments.${queryName}Arguments, TSelection>): Promise<GraphQLApiResponse<OperationReturnType<${queryReturnType}, TSelection>>> {\nconst generatedQuery = buildQueryString("${query.name}", queryArgs);\nreturn await sendRequest<OperationReturnType<${queryReturnType}, TSelection>>(this.config, generatedQuery);\n};`;
 
         generatedQueryMethods.push(generatedType);
     }
