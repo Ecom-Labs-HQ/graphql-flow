@@ -8,6 +8,10 @@ import { generateSchemaTypes } from "./generator/types/index.js";
 import { generateQueryArguments } from "./generator/arguments/index.js";
 import { generateMutationInputs } from "./generator/inputs/index.js";
 import { generateSelectionTypes } from "./generator/selection/index.js";
+
+import { generateArgumentMaps } from "./generator/arguments/type-maps.js";
+import { generateInputMaps } from "./generator/inputs/type-maps.js";
+
 import { generateQueryClient } from "./generator/client/query-client.js";
 import { generateMutationClient } from "./generator/client/mutation-client.js";
 import { generateFullClient } from "./generator/client/full-client.js";
@@ -42,6 +46,16 @@ program
 
         const generatedSelectionTypes = generateSelectionTypes(schema);
         fs.writeFileSync(options.output + "/types/selection-types.ts", generatedSelectionTypes);
+
+        /* Generate the argument and input type maps */
+
+        fs.mkdirSync(options.output + "/type-maps", { recursive: true });
+
+        const generatedArgumentMaps = generateArgumentMaps(schema);
+        fs.writeFileSync(options.output + "/type-maps/argument-maps.ts", generatedArgumentMaps);
+
+        const generatedInputMaps = generateInputMaps(schema);
+        fs.writeFileSync(options.output + "/type-maps/input-maps.ts", generatedInputMaps);
 
         /* Generate the clients */
 
