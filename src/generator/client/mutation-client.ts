@@ -8,12 +8,13 @@ import { generateTypeComment } from "../utils/generate-comment.js";
 import type { GraphQLSchema } from "graphql";
 
 const wrapperCode = `
-import { sendRequest } from "./send-request.js";
-import type { GraphQLApiResponse, GraphQLFlowClientConfig, MutationArgs, OperationReturnType } from "./types.js";
+import { sendRequest } from "../runtime/send-request.js";
+import { buildMutationString } from "../runtime/build-mutation.js";
+import type { GraphQLApiResponse, GraphQLFlowClientConfig, MutationArgs, OperationReturnType } from "../runtime/types.js";
 
-import type * as SelectionTypes from "../selection-types.js";
-import type * as MutationInputs from "../mutation-inputs.js";
-import type * as Types from "../types.js";
+import type * as SelectionTypes from "../types/selection-types.js";
+import type * as MutationInputs from "../types/mutation-inputs.js";
+import type * as BaseTypes from "../types/base-types.js";
 
 export class GraphQLFlowMutationClient {
     private readonly config;
@@ -41,9 +42,9 @@ export function generateMutationClient(schema: GraphQLSchema) {
         const mutationDescription = generateTypeComment(mutation.description);
 
         const mutationSelectionType = getTypeName(mutation.type, "SelectionTypes");
-        const mutationReturnType = getTypeName(mutation.type, "Types");
+        const mutationReturnType = getTypeName(mutation.type, "BaseTypes");
 
-        const generatedType = `${mutationDescription}\npublic async ${mutation.name}<TSelection extends ${mutationSelectionType}Selection>(mutationArgs: MutationArgs<MutationInputs.${mutationName}Input, TSelection>): Promise<GraphQLApiResponse<OperationReturnType<${mutationReturnType}, TSelection>>> {\nreturn await sendRequest<OperationReturnType<${mutationReturnType}, TSelection>>(this.config, mutationArgs);\n};`;
+        const generatedType = `${mutationDescription}\npublic async ${mutation.name}<TSelection extends ${mutationSelectionType}Selection>(mutationArgs: MutationArgs<MutationInputs.${mutationName}Input, TSelection>): Promise<GraphQLApiResponse<OperationReturnType<${mutationReturnType}, TSelection>>> {\nconst generatedMutation = buildMutationString("${mutation.name}", mutationArgs);\nreturn await sendRequest<OperationReturnType<${mutationReturnType}, TSelection>>(this.config, generatedMutation);\n};`;
 
         generatedMutationMethods.push(generatedType);
     }

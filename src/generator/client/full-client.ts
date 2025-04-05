@@ -5,7 +5,7 @@
 const clientCode = `
 import { GraphQLFlowQueryClient } from "./query-client.js";
 import { GraphQLFlowMutationClient } from "./mutation-client.js";
-import type { GraphQLFlowClientConfig } from "./types.js";
+import type { GraphQLFlowClientConfig } from "../runtime/types.js";
 
 export class GraphQLFlowClient {
     private readonly queryClient;

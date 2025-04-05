@@ -35,7 +35,7 @@ export function generateQueryArguments(schema: GraphQLSchema) {
 
         const fieldDefinitions = queryArguments.map((argument) => {
             const fieldType = argument.type;
-            const tsType = generateFieldType(fieldType, "Types");
+            const tsType = generateFieldType(fieldType, "BaseTypes");
 
             const isRequired = isNonNullType(fieldType);
             const fieldName = isRequired ? argument.name : `${argument.name}?`;
@@ -54,7 +54,7 @@ export function generateQueryArguments(schema: GraphQLSchema) {
     const fileHeaders = [
         "/* File auto-generated using [graphql-flow](https://github.com/ecom-labs-hq/graphql-flow) */",
         "/* eslint-disable @typescript-eslint/no-explicit-any */",
-        'import * as Types from "./types.js"',
+        'import * as BaseTypes from "./base-types.js"',
     ];
 
     return [...fileHeaders, ...queryArgumentTypes].join("\n\n");
