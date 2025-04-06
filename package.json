@@ -2,6 +2,8 @@
     "name": "@ecom-labs/graphql-flow",
     "version": "0.1.0",
     "type": "module",
+    "description": "GraphQL Flow - A CLI tool to generate a type-safe GraphQL client from a schema. Features a Prisma-like syntax, zero runtime dependencies for the generated client, and no need for GraphQL codegen.",
+    "bin": "dist/index.js",
     "scripts": {
         "format": "prettier --write .",
         "format:check": "prettier --check .",
@@ -22,5 +24,25 @@
         "prettier": "^3.5.3",
         "typescript": "^5.8.2",
         "typescript-eslint": "^8.29.0"
-    }
+    },
+    "keywords": [
+        "graphql",
+        "graphql-client",
+        "no-codegen",
+        "typescript",
+        "type-safe",
+        "zero-dependencies",
+        "prisma-like",
+        "schema",
+        "cli"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/ecom-labs-hq/graphql-flow"
+    },
+    "author": {
+        "name": "Ecom Labs",
+        "email": "support@ecom-labs.ai"
+    },
+    "license": "MIT"
 }
