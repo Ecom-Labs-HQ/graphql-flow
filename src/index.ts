@@ -82,7 +82,9 @@ program
         fs.writeFileSync(options.output + "/client/full-client.ts", generatedClient);
 
         /* Copy the runtime directory to include all required functions */
-        fs.cpSync("src/runtime", options.output + "/runtime", { recursive: true });
+        fs.cpSync(import.meta.dirname + "/runtime", options.output + "/runtime", {
+            recursive: true,
+        });
     });
 
 program.parse(process.argv);
