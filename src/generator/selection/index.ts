@@ -51,6 +51,8 @@ export function generateSelectionTypes(schema: GraphQLSchema) {
     const fileHeaders = [
         "/* File auto-generated using [graphql-flow](https://github.com/ecom-labs-hq/graphql-flow) */",
         "/* eslint-disable @typescript-eslint/no-explicit-any */",
+        'import type { QueryArgs } from "../runtime/types.js";',
+        'import type * as FieldArguments from "./field-arguments.js";',
     ];
 
     return [...fileHeaders, ...generatedTypes].join("\n\n");

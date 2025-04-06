@@ -24,7 +24,7 @@ export function generateInterfaceSelection(
 
     const fieldDefinitions = Object.values(fields).map((field) => {
         const fieldComment = generateTypeComment(field.description);
-        const fieldSelection = generateFieldSelection(schema, field);
+        const fieldSelection = generateFieldSelection(schema, typeName, field);
 
         return `${fieldComment}\n${fieldSelection}`;
     });
