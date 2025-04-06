@@ -24,7 +24,7 @@ export function generateInterfaceType(interfaceType: GraphQLInterfaceType): stri
         const fieldComment = generateTypeComment(field.description);
         const fieldDefinition = `${field.name}: ${tsType}`;
 
-        return `${fieldComment}\n        ${fieldDefinition}`;
+        return `${fieldComment}\n${fieldDefinition}`;
     });
 
     const interfaceExtensions =
