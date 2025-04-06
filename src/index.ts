@@ -6,10 +6,12 @@ import { program } from "commander";
 
 import { generateSchemaTypes } from "./generator/types/index.js";
 import { generateQueryArguments } from "./generator/arguments/index.js";
+import { generateFieldArguments } from "./generator/arguments/field-arguments.js";
 import { generateMutationInputs } from "./generator/inputs/index.js";
 import { generateSelectionTypes } from "./generator/selection/index.js";
 
 import { generateArgumentMaps } from "./generator/arguments/type-maps.js";
+import { generateFieldArgumentMaps } from "./generator/arguments/field-type-maps.js";
 import { generateInputMaps } from "./generator/inputs/type-maps.js";
 
 import { generateQueryClient } from "./generator/client/query-client.js";
@@ -41,6 +43,9 @@ program
         const generatedQueryArguments = generateQueryArguments(schema);
         fs.writeFileSync(options.output + "/types/query-arguments.ts", generatedQueryArguments);
 
+        const generatedFieldArguments = generateFieldArguments(schema);
+        fs.writeFileSync(options.output + "/types/field-arguments.ts", generatedFieldArguments);
+
         const generatedMutationInputs = generateMutationInputs(schema);
         fs.writeFileSync(options.output + "/types/mutation-inputs.ts", generatedMutationInputs);
 
@@ -53,6 +58,12 @@ program
 
         const generatedArgumentMaps = generateArgumentMaps(schema);
         fs.writeFileSync(options.output + "/type-maps/argument-maps.ts", generatedArgumentMaps);
+
+        const generatedFieldArgumentMaps = generateFieldArgumentMaps(schema);
+        fs.writeFileSync(
+            options.output + "/type-maps/field-argument-maps.ts",
+            generatedFieldArgumentMaps
+        );
 
         const generatedInputMaps = generateInputMaps(schema);
         fs.writeFileSync(options.output + "/type-maps/input-maps.ts", generatedInputMaps);
