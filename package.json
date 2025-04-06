@@ -5,6 +5,7 @@
     "scripts": {
         "format": "prettier --write .",
         "format:check": "prettier --check .",
+        "check-types": "tsc --noEmit",
         "lint": "eslint ."
     },
     "dependencies": {

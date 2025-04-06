@@ -1,8 +1,6 @@
 {
     "$schema": "https://json.schemastore.org/tsconfig",
     "compilerOptions": {
-        "outDir": "dist",
-
         /* Force require() for CommonJS and import for ESM */
         "verbatimModuleSyntax": true,
 
@@ -34,15 +32,7 @@
         "noFallthroughCasesInSwitch": true,
         "noUncheckedIndexedAccess": true,
         "noImplicitOverride": true,
-        "strict": true,
-
-        /* Emit extra files for types and vscode */
-        "declaration": true,
-        "declarationMap": true,
-        "sourceMap": true,
-
-        /* Other useful settings */
-        "removeComments": true
+        "strict": true
     },
     "include": ["src"],
     "exclude": ["node_modules", "dist"]
