@@ -26,19 +26,22 @@ export type MutationArgs<TData extends object, TSelection extends object | true>
 /* Return type of operation. Adapted from prisma's `GetFindResult` type */
 
 // prettier-ignore
-export type OperationReturnType<TObject, TSelection> = TSelection extends true ? TObject : {
-    [Key in keyof TSelection as TSelection[Key] extends null | undefined | false | never ? never : Key]: TSelection[Key] extends object
-        ? TObject extends { [K in Key]: (infer RelatedType)[] }
-            ? RelatedType extends object
-                ? OperationReturnType<RelatedType, TSelection[Key]>[]
+export type OperationReturnType<TObject, TSelection> = TSelection extends true 
+    ? TObject
+    : TSelection extends QueryArgs<object, infer NestedSelection> 
+    ? OperationReturnType<TObject, NestedSelection> 
+    : {
+        [Key in keyof TSelection as TSelection[Key] extends null | undefined | false | never ? never : Key]: TSelection[Key] extends object
+            ? TObject extends { [K in Key]: (infer RelatedType)[] }
+                ? RelatedType extends object
+                    ? OperationReturnType<RelatedType, TSelection[Key]>[]
+                    : never
+                : TObject extends { [K in Key]: infer RelatedType | null }
+                ? RelatedType extends object
+                    ? OperationReturnType<RelatedType, TSelection[Key]> | null
+                    : never
                 : never
-            : TObject extends { [K in Key]: infer RelatedType | null }
-              ? RelatedType extends object
-                  ? OperationReturnType<RelatedType, TSelection[Key]> | null
-                  : never
-              : never
-        : TObject extends { [K in Key]: infer ScalarType }
-          ? ScalarType
-          : never;
-
+            : TObject extends { [K in Key]: infer ScalarType }
+            ? ScalarType
+            : never;
 };
