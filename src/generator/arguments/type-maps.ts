@@ -35,7 +35,7 @@ export function generateArgumentMaps(schema: GraphQLSchema) {
             const fieldComment = generateTypeComment(field.description);
             const fieldDefinition = `${fieldName}: "${fieldType}",`;
 
-            return `${fieldComment}\n    ${fieldDefinition}`;
+            return `${fieldComment}\n${fieldDefinition}`;
         });
 
         const generatedType = `export const ${query.name}ArgumentMap = {\n${fieldDefinitions.join("\n\n")}\n};`;

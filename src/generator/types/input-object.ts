@@ -27,7 +27,7 @@ export function generateInputObjectType(inputObjectType: GraphQLInputObjectType)
         const fieldComment = generateTypeComment(field.description);
         const fieldDefinition = `${fieldName}: ${tsType}`;
 
-        return `${fieldComment}\n        ${fieldDefinition}`;
+        return `${fieldComment}\n${fieldDefinition}`;
     });
 
     const typeComment = generateTypeComment(inputObjectType.description);

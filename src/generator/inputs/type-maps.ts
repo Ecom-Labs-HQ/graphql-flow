@@ -35,7 +35,7 @@ export function generateInputMaps(schema: GraphQLSchema) {
             const fieldComment = generateTypeComment(input.description);
             const fieldDefinition = `${fieldName}: "${fieldType}",`;
 
-            return `${fieldComment}\n    ${fieldDefinition}`;
+            return `${fieldComment}\n${fieldDefinition}`;
         });
 
         const generatedType = `export const ${mutation.name}InputMap = {\n${fieldDefinitions.join("\n\n")}\n};`;

@@ -43,7 +43,7 @@ export function generateQueryArguments(schema: GraphQLSchema) {
             const fieldComment = generateTypeComment(argument.description);
             const fieldDefinition = `${fieldName}: ${tsType}`;
 
-            return `${fieldComment}\n    ${fieldDefinition}`;
+            return `${fieldComment}\n${fieldDefinition}`;
         });
 
         const generatedType = `export type ${queryName}Arguments = {\n${fieldDefinitions.join("\n\n")}\n};`;

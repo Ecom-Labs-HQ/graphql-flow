@@ -43,7 +43,7 @@ export function generateMutationInputs(schema: GraphQLSchema) {
             const fieldComment = generateTypeComment(input.description);
             const fieldDefinition = `${fieldName}: ${tsType}`;
 
-            return `${fieldComment}\n    ${fieldDefinition}`;
+            return `${fieldComment}\n${fieldDefinition}`;
         });
 
         const generatedType = `export type ${mutationName}Input = {\n${fieldDefinitions.join("\n\n")}\n};`;
