@@ -2,6 +2,7 @@
  * Build a complete GraphQL query string from a query name, argument map, and selection
  */
 
+import { formatArguments } from "./format-arguments.js";
 import type { QueryArgs } from "./types.js";
 
 export type CreatedGraphQLQuery = {
@@ -27,9 +28,7 @@ export function buildGraphQLQuery(
                 const nestedFields = buildFields(nestedQuery.select);
 
                 if (nestedQuery.args && Object.keys(nestedQuery.args).length > 0) {
-                    const argsString = Object.entries(nestedQuery.args)
-                        .map(([argName, argValue]) => `${argName}: ${argValue}`)
-                        .join(", ");
+                    const argsString = formatArguments(nestedQuery.args);
                     selectedFields.push(`${field}(${argsString}) { ${nestedFields} }`);
                 } else {
                     selectedFields.push(`${field} { ${nestedFields} }`);
@@ -56,26 +55,20 @@ export function buildGraphQLQuery(
 
     const fieldSelection = buildFields(select);
 
+    /* If there are no args, send the query without */
+
     if (!args || Object.values(args).length === 0) {
         return {
             query: `query ${queryName} { ${queryName} ${fieldSelection} }`,
         };
     }
 
-    const variableDefinitions = Object.entries(args)
-        .map(([argName]) => `$${argName}: ${argumentMap[argName]}`)
-        .join(", ");
+    /* Otherwise format them and add them to the string */
 
-    const argumentString = Object.keys(args)
-        .map((argName) => `${argName}: $${argName}`)
-        .join(", ");
+    const argumentString = formatArguments(args);
 
-    const fullData = {
-        query: `query ${queryName}(${variableDefinitions}) { ${queryName}(${argumentString}) { ${fieldSelection} } }`,
-        variables: args,
+    return {
+        query: `query ${queryName} { ${queryName}(${argumentString}) { ${fieldSelection} } }`,
+        variables: {},
     };
-
-    console.log(fullData);
-
-    return fullData;
 }

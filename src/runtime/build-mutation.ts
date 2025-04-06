@@ -2,6 +2,7 @@
  * Build a complete GraphQL mutation string from a mutation name, argument map, and selection
  */
 
+import { formatArguments } from "./format-arguments.js";
 import type { MutationArgs } from "./types.js";
 
 export type CreatedGraphQLMutation = {
@@ -27,9 +28,7 @@ export function buildGraphQLMutation(
                 const nestedFields = buildFields(nestedQuery.select);
 
                 if (nestedQuery.args && Object.keys(nestedQuery.args).length > 0) {
-                    const argsString = Object.entries(nestedQuery.args)
-                        .map(([argName, argValue]) => `${argName}: ${argValue}`)
-                        .join(", ");
+                    const argsString = formatArguments(nestedQuery.args);
                     selectedFields.push(`${field}(${argsString}) { ${nestedFields} }`);
                 } else {
                     selectedFields.push(`${field} { ${nestedFields} }`);
@@ -56,11 +55,15 @@ export function buildGraphQLMutation(
 
     const fieldSelection = buildFields(select);
 
+    /* If there is no data, send the mutation without */
+
     if (!data || Object.values(data).length === 0) {
         return {
             query: `mutation ${mutationName} { ${mutationName} ${fieldSelection} }`,
         };
     }
+
+    /* Otherwise, create the definitions and variables */
 
     const variableDefinitions = Object.entries(data)
         .map(([dataName]) => `$${dataName}: ${argumentMap[dataName]}`)
