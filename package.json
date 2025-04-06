@@ -28,13 +28,8 @@
     "keywords": [
         "graphql",
         "graphql-client",
-        "no-codegen",
-        "typescript",
-        "type-safe",
-        "zero-dependencies",
-        "prisma-like",
-        "schema",
-        "cli"
+        "zero-dependency",
+        "typescript"
     ],
     "repository": {
         "type": "git",
