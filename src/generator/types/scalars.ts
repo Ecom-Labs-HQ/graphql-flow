@@ -30,6 +30,6 @@ export function generateScalarType(scalarType: GraphQLScalarType): string {
             return "string";
 
         default:
-            return "any";
+            return "unknown";
     }
 }
