@@ -3,55 +3,51 @@
  * need to return the type along with the correct modifiers.
  */
 
-import { generateScalarType } from "./scalars.js";
-import { isListType, isNonNullType, isScalarType } from "graphql";
-import type { GraphQLInputType, GraphQLOutputType } from "graphql";
+import { convertGraphQLType } from "../utils/convert-type.js";
+import { formatArguments } from "../utils/format-arguments.js";
+import { isInterfaceType, isObjectType, isUnionType } from "graphql";
+import type { GraphQLField, GraphQLInterfaceType, GraphQLSchema } from "graphql";
 
-export function generateFieldType(type: GraphQLInputType | GraphQLOutputType, typePrefix?: string) {
-    /* Strip the type of any modifiers and store them in variables */
+export function generateFieldType(schema: GraphQLSchema, field: GraphQLField<unknown, unknown>) {
+    const { strippedType, typescriptType } = convertGraphQLType(field.type);
+    const formattedArguments = formatArguments(field.args);
 
-    let isArrayType = false;
-    let arrayIsNullable = true;
-    let itemsAreNullable = true;
+    /* Generate the metadata */
 
-    let currentType = type;
+    if (isUnionType(field.type)) {
+        const unionMembers = field.type.getTypes();
 
-    if (isNonNullType(currentType)) {
-        arrayIsNullable = false;
-        currentType = currentType.ofType;
+        const generatedMemberTypes: string[] = unionMembers.map(
+            (member) => `${member.name}: ${member.name}`
+        );
+
+        const generatedMembers = `{ ${generatedMemberTypes.join("; ")} }`;
+
+        return `{ members: ${generatedMembers}, arguments: ${formattedArguments} }`;
     }
 
-    if (isListType(currentType)) {
-        isArrayType = true;
-        currentType = currentType.ofType;
+    if (isInterfaceType(field.type)) {
+        const allObjects = Object.values(schema.getTypeMap()).filter((type) => isObjectType(type));
 
-        if (isNonNullType(currentType)) {
-            itemsAreNullable = false;
-            currentType = currentType.ofType;
-        }
+        const implementingTypes = allObjects.filter((type) =>
+            type.getInterfaces().includes(field.type as GraphQLInterfaceType)
+        );
+
+        const sharedInterfaceFields = field.type.getFields();
+
+        const generatedFieldTypes: string[] = Object.values(sharedInterfaceFields).map(
+            (field) => `${field.name}: ${generateFieldType(schema, field)}`
+        );
+
+        const generatedMemberTypes: string[] = implementingTypes.map(
+            (type) => `${type.name}: ${type.name}`
+        );
+
+        const generatedMembers = `{ ${generatedMemberTypes.join("; ")} }`;
+        const generatedFields = `{ ${generatedFieldTypes.join("; ")} }`;
+
+        return `{ members: ${generatedMembers}, fields: ${generatedFields}, arguments: ${formattedArguments} }`;
     }
 
-    /* Convert the GraphQL type to a typescript type */
-
-    let typescriptType = "";
-
-    if (isNonNullType(currentType) || isListType(currentType)) {
-        throw new Error("Failed to correctly strip type of modifiers in previous step");
-    } else if (isScalarType(currentType)) {
-        typescriptType = generateScalarType(currentType);
-    } else {
-        typescriptType = typePrefix ? `${typePrefix}.${currentType.name}` : currentType.name;
-    }
-
-    /* Apply the modifiers to the type, if any */
-
-    if (isArrayType) {
-        typescriptType = `Array<${typescriptType}${itemsAreNullable ? " | null" : ""}>`;
-    }
-
-    if (arrayIsNullable) {
-        typescriptType = `${typescriptType} | null`;
-    }
-
-    return typescriptType;
+    return `{ strippedType: ${strippedType}, returnType: ${typescriptType}, arguments: ${formattedArguments} }`;
 }

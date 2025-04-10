@@ -2,13 +2,12 @@
  * Send the GraphQL request using the global `fetch` API
  */
 
-import type { CreatedGraphQLMutation } from "./build-mutation.js";
-import type { CreatedGraphQLQuery } from "./build-query.js";
-import type { GraphQLApiResponse, GraphQLFlowClientConfig } from "./types.js";
+import type { GraphQLFlowClientConfig } from "./types.js";
+import type { CreatedGraphQLOperation } from "./build-operation.js";
 
-export async function sendRequest<TReturnType extends object>(
+export async function sendRequest(
     config: GraphQLFlowClientConfig,
-    queryOrMutation: CreatedGraphQLQuery | CreatedGraphQLMutation
+    operation: CreatedGraphQLOperation
 ) {
     const response = await fetch(config.endpoint, {
         method: "POST",
@@ -16,10 +15,9 @@ export async function sendRequest<TReturnType extends object>(
             "Content-Type": "application/json",
             ...(config.headers ? config.headers : {}),
         },
-        body: JSON.stringify(queryOrMutation),
+        body: JSON.stringify(operation),
     });
 
     const data = await response.json();
-
-    return data as GraphQLApiResponse<TReturnType>;
+    return data;
 }
