@@ -6,7 +6,7 @@
 import { convertGraphQLType } from "../utils/convert-type.js";
 import { formatArguments } from "../utils/format-arguments.js";
 import { isInterfaceType, isObjectType, isUnionType } from "graphql";
-import type { GraphQLField, GraphQLInterfaceType, GraphQLSchema } from "graphql";
+import type { GraphQLField, GraphQLSchema } from "graphql";
 
 export function generateFieldType(schema: GraphQLSchema, field: GraphQLField<unknown, unknown>) {
     const { strippedType, typescriptType } = convertGraphQLType(field.type);
@@ -14,8 +14,8 @@ export function generateFieldType(schema: GraphQLSchema, field: GraphQLField<unk
 
     /* Generate the metadata */
 
-    if (isUnionType(field.type)) {
-        const unionMembers = field.type.getTypes();
+    if (isUnionType(strippedType)) {
+        const unionMembers = strippedType.getTypes();
 
         const generatedMemberTypes: string[] = unionMembers.map(
             (member) => `${member.name}: ${member.name}`
@@ -26,14 +26,14 @@ export function generateFieldType(schema: GraphQLSchema, field: GraphQLField<unk
         return `{ members: ${generatedMembers}, arguments: ${formattedArguments} }`;
     }
 
-    if (isInterfaceType(field.type)) {
+    if (isInterfaceType(strippedType)) {
         const allObjects = Object.values(schema.getTypeMap()).filter((type) => isObjectType(type));
 
         const implementingTypes = allObjects.filter((type) =>
-            type.getInterfaces().includes(field.type as GraphQLInterfaceType)
+            type.getInterfaces().includes(strippedType)
         );
 
-        const sharedInterfaceFields = field.type.getFields();
+        const sharedInterfaceFields = strippedType.getFields();
 
         const generatedFieldTypes: string[] = Object.values(sharedInterfaceFields).map(
             (field) => `${field.name}: ${generateFieldType(schema, field)}`
