@@ -1,5 +1,5 @@
 {
-    "name": "@ecom-labs/graphql-flow",
+    "name": "graphql-flow",
     "version": "0.1.0",
     "type": "module",
     "description": "GraphQL Flow - A CLI tool to generate a type-safe GraphQL client from a schema. Features a Prisma-like syntax, zero runtime dependencies for the generated client, and no need for GraphQL codegen.",
@@ -9,7 +9,8 @@
         "format:check": "prettier --check .",
         "check-types": "tsc --noEmit",
         "lint": "eslint .",
-        "build": "ncc build src/index.ts -o dist --no-cache --source-map --minify && cp -r ./src/runtime ./dist"
+        "build": "ncc build src/index.ts -o dist --no-cache --source-map --minify && cp -r ./src/runtime ./dist",
+        "release": "semantic-release"
     },
     "dependencies": {
         "commander": "^13.1.0",
@@ -17,11 +18,13 @@
     },
     "devDependencies": {
         "@eslint/js": "^9.23.0",
+        "@semantic-release/git": "^10.0.1",
         "@types/node": "^22.14.0",
         "@vercel/ncc": "^0.38.3",
         "eslint-config-prettier": "^10.1.1",
         "globals": "^16.0.0",
         "prettier": "^3.5.3",
+        "semantic-release": "^24.2.3",
         "typescript": "^5.8.2",
         "typescript-eslint": "^8.29.0"
     },
