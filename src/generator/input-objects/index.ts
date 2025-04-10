@@ -39,11 +39,6 @@ export function generateInputTypes(schema: GraphQLSchema) {
         generatedTypes.push(generatedType);
     }
 
-    const fileHeaders = [
-        "/* File auto-generated using [graphql-flow](https://github.com/ecom-labs-hq/graphql-flow) */",
-        "/* eslint-disable @typescript-eslint/no-explicit-any */",
-        'import * as BaseTypes from "./base-types.js"',
-    ];
-
+    const fileHeaders = ['import * as BaseTypes from "./base-types.js"'];
     return [...fileHeaders, ...generatedTypes].join("\n\n");
 }
