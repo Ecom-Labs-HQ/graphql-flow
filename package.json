@@ -1,6 +1,6 @@
 {
     "name": "graphql-flow",
-    "version": "0.1.0",
+    "version": "1.0.0",
     "type": "module",
     "description": "GraphQL Flow - A CLI tool to generate a type-safe GraphQL client from a schema. Features a Prisma-like syntax, zero runtime dependencies for the generated client, and no need for GraphQL codegen.",
     "bin": "dist/index.js",
