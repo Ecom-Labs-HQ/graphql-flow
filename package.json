@@ -34,6 +34,11 @@
         "zero-dependency",
         "typescript"
     ],
+    "files": [
+        "dist",
+        "README.md",
+        "LICENSE"
+    ],
     "repository": {
         "type": "git",
         "url": "https://github.com/ecom-labs-hq/graphql-flow"
