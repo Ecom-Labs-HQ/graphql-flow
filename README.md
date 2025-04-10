@@ -112,7 +112,14 @@ Generated GraphQL:
 
 ```
 query user {
-  user(id: "1") { id name posts { id title } }
+    user(id: "1") {
+        id
+        name
+        posts {
+            id
+            title
+        }
+    }
 }
 ```
 
@@ -138,7 +145,10 @@ Generated GraphQL:
 
 ```
 query allUsers {
-  allUsers { id name }
+    allUsers {
+        id
+        name
+    }
 }
 ```
 
@@ -179,7 +189,10 @@ Generated GraphQL:
 
 ```
 mutation createPost {
-  createPost(title: "Hello World", content: "This is a post", authorId: "1") { id title }
+    createPost(title: "Hello World", content: "This is a post", authorId: "1") {
+        id
+        title
+    }
 }
 ```
 
@@ -241,7 +254,17 @@ Generated GraphQL:
 
 ```
 query item {
-  item(id: "1") { id ... on Book { title author } ... on Movie { title director } }
+    item(id: "1") {
+        id
+        ... on Book {
+            title
+            author
+        }
+        ... on Movie {
+            title
+            director
+        }
+    }
 }
 ```
 
