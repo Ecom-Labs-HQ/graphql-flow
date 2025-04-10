@@ -19,7 +19,9 @@ program
     .requiredOption("-o, --output <path>", "Output path for the generated client")
     .option("-c, --clean", "Delete the output directory before generating")
     .action((options) => {
-        if (options.clean) {
+        const directoryExists = fs.existsSync(options.output);
+
+        if (options.clean && directoryExists) {
             fs.rmSync(options.output, { recursive: true });
         }
 
