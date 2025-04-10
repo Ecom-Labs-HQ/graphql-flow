@@ -252,18 +252,18 @@ After generation, your output directory will look like this:
 ```
 generated-client/
 ├── client/
-│   ├── full-client.ts    # Main client class
-│   ├── query-client.ts   # Query methods
-│   └── mutation-client.ts # Mutation methods
+│   ├── full-client.ts      # Main client class
+│   ├── query-client.ts     # Query methods
+│   └── mutation-client.ts  # Mutation methods
 ├── runtime/
-│   ├── build-operation.ts # Builds GraphQL operations
+│   ├── build-operation.ts  # Builds GraphQL operations
 │   ├── format-arguments.ts # Formats inline arguments
-│   ├── send-request.ts    # Sends requests via fetch
-│   └── types.ts          # Core runtime types
+│   ├── send-request.ts     # Sends requests via fetch
+│   └── types.ts            # Core runtime types
 └── types/
-    ├── base-types.ts     # Scalars and enums
-    ├── input-types.ts    # Input object types
-    └── types.ts         # Schema types (objects, interfaces, unions)
+    ├── base-types.ts       # Scalars and enums
+    ├── input-types.ts      # Input object types
+    └── types.ts            # Schema types (objects, interfaces, unions)
 ```
 
 ## How It Works
