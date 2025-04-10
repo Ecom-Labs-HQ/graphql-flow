@@ -209,6 +209,8 @@ type Query {
 }
 ```
 
+Which translates to this query:
+
 ```typescript
 async function fetchItem() {
     const response = await client.queries.item({
