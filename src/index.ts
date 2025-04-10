@@ -12,8 +12,10 @@ import { generateQueryClient } from "./generator/client/query-client.js";
 import { generateMutationClient } from "./generator/client/mutation-client.js";
 import { generateFullClient } from "./generator/client/full-client.js";
 
+import packageJson from "../package.json" with { type: "json" };
+
 program
-    .version("1.0.0")
+    .version(packageJson.version)
     .description("GraphQL Flow - Generate a simple GraphQL client from a schema")
     .requiredOption("-s, --schema <path>", "Path to the GraphQL schema file")
     .requiredOption("-o, --output <path>", "Output path for the generated client")
