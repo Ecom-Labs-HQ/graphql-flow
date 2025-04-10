@@ -16,10 +16,10 @@ export type QueryArgs<TArgs, TSelection> = {
     select: TSelection;
 };
 
-export type MutationArgs<TData extends object, TSelection extends object | true> = {
-    data?: TData;
-    select: TSelection;
-};
+export type UnwrapQueryArgs<TField extends BasicField | UnionField | InterfaceField, TSelection> =
+    TSelection extends QueryArgs<TField["arguments"], infer InnerSelection>
+        ? UnwrapQueryArgs<TField, InnerSelection>
+        : TSelection;
 
 /* Infer the select type */
 export type BasicField = {
@@ -38,6 +38,11 @@ export type InterfaceField = {
     fields: Record<string, BasicField | UnionField | InterfaceField>;
     arguments: Record<string, unknown> | never;
 };
+
+/**
+ * Infer the type that is used for selecting the fields. Also allows for creation of Fragments in
+ * using JS objects.
+ */
 
 // prettier-ignore
 export type InferSelectType<TField extends BasicField | UnionField | InterfaceField> = 
@@ -114,51 +119,10 @@ export type InferSelectType<TField extends BasicField | UnionField | InterfaceFi
      */
     : never
 
-// prettier-ignore
-export type InferFullReturnType<TField extends BasicField | UnionField | InterfaceField> = 
-    /**
-     * Check if the field is an interface field.
-     * Return a union of all implementing types, each including the shared fields
-     */
-    TField extends InterfaceField ?
-        {
-            [TypeName in keyof TField["members"]]: {
-                [Key in keyof TField["fields"]]: InferFullReturnType<TField["fields"][Key]>
-            } & {
-                [Key in keyof TField["members"][TypeName]]: InferFullReturnType<TField["members"][TypeName][Key]>
-            }
-        }[keyof TField["members"]]
-
-    /**
-     * Check if the field is a union field.
-     * Return a union of all possible member types
-     */
-    : TField extends UnionField ?
-        {
-            [TypeName in keyof TField["members"]]: {
-                [Key in keyof TField["members"][TypeName]]: InferFullReturnType<TField["members"][TypeName][Key]>
-            }
-        }[keyof TField["members"]]
-
-    /**
-     * Check if the field is a basic field
-     */
-    : TField extends BasicField ?
-        TField["strippedType"] extends Record<string, BasicField | UnionField | InterfaceField> ? {
-            [Key in keyof TField["strippedType"]]: InferFullReturnType<TField["strippedType"][Key]>
-        } : TField["returnType"]
-
-    /**
-     * If none of the types match, something probably went wrong when generating the types.
-     * Default to `never` for that case.
-     */
-    : never
-
-// Helpers
-type UnwrapQueryArgs<TField extends BasicField | UnionField | InterfaceField, TSelection> =
-    TSelection extends QueryArgs<TField["arguments"], infer InnerSelection>
-        ? UnwrapQueryArgs<TField, InnerSelection>
-        : TSelection;
+/**
+ * Infer the return type of a query/mutation using the selected fields. Only include fields that
+ * are marked as true.
+ */
 
 // prettier-ignore
 export type InferSelectedReturnType<
