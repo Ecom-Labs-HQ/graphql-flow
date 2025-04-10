@@ -11,6 +11,7 @@ import { buildGraphQLOperation } from "../runtime/build-operation.js";
 
 import type { GraphQLApiResponse, GraphQLFlowClientConfig, InferSelectType, InferSelectedReturnType } from "../runtime/types.js";
 import type { QUERY_TYPE_NAME } from "../types/types.js";
+import type { Exact } from "type-fest";
 
 export class GraphQLFlowQueryClient {
     private readonly config;
@@ -39,7 +40,7 @@ export function generateQueryClient(schema: GraphQLSchema) {
         const querySelectType = `InferSelectType<${queryType.name}["${query.name}"]>`;
         const queryReturnType = `${queryType.name}["${query.name}"]`;
 
-        const generatedType = `${queryDescription}\npublic async ${query.name}<TSelection extends ${querySelectType}>(queryArgs: TSelection): Promise<GraphQLApiResponse<InferSelectedReturnType<${queryReturnType}, TSelection>>> {\nconst generatedQuery = buildGraphQLOperation("query", "${query.name}", queryArgs);\nreturn await sendRequest(this.config, generatedQuery);\n};`;
+        const generatedType = `${queryDescription}\npublic async ${query.name}<TSelection extends Exact<${querySelectType}, TSelection>>(queryArgs: TSelection): Promise<GraphQLApiResponse<InferSelectedReturnType<${queryReturnType}, TSelection>>> {\nconst generatedQuery = buildGraphQLOperation("query", "${query.name}", queryArgs);\nreturn await sendRequest(this.config, generatedQuery);\n};`;
         generatedQueryMethods.push(generatedType);
     }
 
