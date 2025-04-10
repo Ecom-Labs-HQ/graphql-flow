@@ -7,7 +7,6 @@ import { convertGraphQLType } from "../utils/convert-type.js";
 import { formatArguments } from "../utils/format-arguments.js";
 import { isInterfaceType, isObjectType, isUnionType } from "graphql";
 import type { GraphQLField, GraphQLSchema } from "graphql";
-import { generateTypename } from "../utils/generate-typename.js";
 
 export function generateFieldType(schema: GraphQLSchema, field: GraphQLField<unknown, unknown>) {
     const { strippedType, typescriptType } = convertGraphQLType(field.type);
@@ -31,7 +30,6 @@ export function generateFieldType(schema: GraphQLSchema, field: GraphQLField<unk
         const generatedFieldTypes: string[] = Object.values(sharedInterfaceFields).map(
             (field) => `${field.name}: ${generateFieldType(schema, field)}`
         );
-        generatedFieldTypes.push(`__typename: ${generateTypename(strippedType.name)}`);
 
         const generatedMembers = `{ ${generatedMemberTypes.join("; ")} }`;
         const generatedFields = `{ ${generatedFieldTypes.join("; ")} }`;
