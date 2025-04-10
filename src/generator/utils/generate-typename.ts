@@ -3,5 +3,5 @@
  */
 
 export function generateTypename(fieldName: string): string {
-    return `{ baseType: "${fieldName}", returnType: "${fieldName}", arguments: never }`;
+    return `{ baseType: "${fieldName}", returnType: "${fieldName}", arguments: never, isArray: false, itemsAreNullable: true, isNullable: false }`;
 }

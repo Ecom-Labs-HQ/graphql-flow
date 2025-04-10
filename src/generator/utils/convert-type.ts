@@ -11,46 +11,51 @@ export function convertGraphQLType(graphqlType: GraphQLOutputType | GraphQLInput
     let arrayIsNullable = true;
     let itemsAreNullable = true;
 
-    let baseType = graphqlType;
+    let strippedType = graphqlType;
 
-    if (isNonNullType(baseType)) {
+    if (isNonNullType(strippedType)) {
         arrayIsNullable = false;
-        baseType = baseType.ofType;
+        strippedType = strippedType.ofType;
     }
 
-    if (isListType(baseType)) {
+    if (isListType(strippedType)) {
         isArrayType = true;
-        baseType = baseType.ofType;
+        strippedType = strippedType.ofType;
 
-        if (isNonNullType(baseType)) {
+        if (isNonNullType(strippedType)) {
             itemsAreNullable = false;
-            baseType = baseType.ofType;
+            strippedType = strippedType.ofType;
         }
     }
 
-    if (isNonNullType(baseType) || isListType(baseType)) {
+    if (isNonNullType(strippedType) || isListType(strippedType)) {
         throw new Error("Failed to correctly strip type of modifiers in previous step");
     }
 
-    let typescriptType = baseType.toString();
-    typescriptType =
-        isScalarType(baseType) || isEnumType(baseType)
-            ? `BaseTypes.${typescriptType}`
-            : isInputType(baseType)
-              ? `InputTypes.${typescriptType}`
-              : typescriptType;
+    let baseType = strippedType.toString();
+
+    if (isScalarType(strippedType) || isEnumType(strippedType)) {
+        baseType = `BaseTypes.${baseType}`;
+    } else if (isInputType(strippedType)) {
+        baseType = `InputTypes.${baseType}`;
+    }
+
+    let inputType = baseType;
 
     if (isArrayType) {
-        typescriptType = `Array<${typescriptType}${itemsAreNullable ? " | null" : ""}>`;
+        inputType = `Array<${inputType}${itemsAreNullable ? " | null" : ""}>`;
     }
 
     if (arrayIsNullable) {
-        typescriptType = `${typescriptType} | null`;
+        inputType = `${inputType} | null`;
     }
 
     return {
-        baseType:
-            isScalarType(baseType) || isEnumType(baseType) ? `BaseTypes.${baseType}` : baseType,
-        typescriptType,
+        baseType: baseType,
+        strippedType: strippedType,
+        inputType: inputType,
+        isArray: isArrayType,
+        itemsAreNullable: itemsAreNullable,
+        isNullable: arrayIsNullable,
     };
 }
