@@ -9,7 +9,7 @@
         "format:check": "prettier --check .",
         "check-types": "tsc --noEmit",
         "lint": "eslint .",
-        "build": "ncc build src/index.ts -o dist --no-cache --minify && cp -r ./src/runtime ./dist"
+        "build": "ncc build src/index.ts -o dist --no-cache --source-map --minify && cp -r ./src/runtime ./dist"
     },
     "dependencies": {
         "commander": "^13.1.0",
