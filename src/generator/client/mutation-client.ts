@@ -11,6 +11,7 @@ import { buildGraphQLOperation } from "../runtime/build-operation.js";
 
 import type { GraphQLApiResponse, GraphQLFlowClientConfig, InferSelectType, InferSelectedReturnType } from "../runtime/types.js";
 import type { MUTATION_TYPE_NAME } from "../types/types.js";
+import type { Exact } from "type-fest";
 
 export class GraphQLFlowMutationClient {
     private readonly config;
@@ -39,7 +40,7 @@ export function generateMutationClient(schema: GraphQLSchema) {
         const mutationSelectType = `InferSelectType<${mutationType.name}["${mutation.name}"]>`;
         const mutationReturnType = `${mutationType.name}["${mutation.name}"]`;
 
-        const generatedType = `${mutationDescription}\npublic async ${mutation.name}<TSelection extends ${mutationSelectType}>(mutationArgs: TSelection): Promise<GraphQLApiResponse<InferSelectedReturnType<${mutationReturnType}, TSelection>>> {\nconst generatedMutation = buildGraphQLOperation("mutation", "${mutation.name}", mutationArgs);\nreturn await sendRequest(this.config, generatedMutation);\n};`;
+        const generatedType = `${mutationDescription}\npublic async ${mutation.name}<TSelection extends Exact<${mutationSelectType}, TSelection>>(mutationArgs: TSelection): Promise<GraphQLApiResponse<InferSelectedReturnType<${mutationReturnType}, TSelection>>> {\nconst generatedMutation = buildGraphQLOperation("mutation", "${mutation.name}", mutationArgs);\nreturn await sendRequest(this.config, generatedMutation);\n};`;
         generatedMutationMethods.push(generatedType);
     }
 
