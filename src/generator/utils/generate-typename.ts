@@ -3,5 +3,5 @@
  */
 
 export function generateTypename(fieldName: string): string {
-    return `{ strippedType: "${fieldName}", returnType: "${fieldName}", arguments: never }`;
+    return `{ baseType: "${fieldName}", returnType: "${fieldName}", arguments: never }`;
 }
