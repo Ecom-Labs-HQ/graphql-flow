@@ -128,8 +128,33 @@ export type InferSelectType<TField extends BasicField | UnionField | InterfaceFi
     : never
 
 /**
+ * Helper type to apply array and nullable modifiers to a type.
+ * Handles all combinations of isArray, itemsAreNullable, and isNullable.
+ */
+export type ApplyModifiers<TBaseType, TField extends BasicField | UnionField | InterfaceField> =
+    // Is an array and the whole field can be null
+    TField["isArray"] extends true
+        ? TField["isNullable"] extends true
+            ? TField["itemsAreNullable"] extends true
+                ? // Array with nullable items that can itself be null
+                  (TBaseType | null)[] | null
+                : // Array with non-nullable items that can itself be null
+                  TBaseType[] | null
+            : TField["itemsAreNullable"] extends true
+              ? // Array with nullable items that cannot itself be null
+                (TBaseType | null)[]
+              : // Array with non-nullable items that cannot itself be null
+                TBaseType[]
+        : // Not an array
+          TField["isNullable"] extends true
+          ? // Non-array that can be null
+            TBaseType | null
+          : // Non-array that cannot be null
+            TBaseType;
+
+/**
  * Infer the return type of a query/mutation using the selected fields. Only include fields that
- * are marked as true.
+ * are marked as true. Apply array and nullable modifiers based on field configuration.
  */
 
 // prettier-ignore
@@ -147,16 +172,36 @@ export type InferSelectedReturnType<
      * Check if the field is an interface field
      */
     : TField extends InterfaceField ?
-        {
-            /* Loop over each field int the interface */
-            [Key in keyof TField["fields"] as Key extends keyof TSelection ? Key : never]: 
-                /* Double check that each key exists in TSelection */
-                Key extends keyof TSelection ?
-                    InferSelectedReturnType<TField["fields"][Key], TSelection[Key]>
-                /* If not, fall back to never */
-                : never
-        } & (
-            /* Loop over each member of the interface and build a discriminated union */
+        ApplyModifiers<
+            {
+                /* Loop over each field int the interface */
+                [Key in keyof TField["fields"] as Key extends keyof TSelection ? Key : never]: 
+                    /* Double check that each key exists in TSelection */
+                    Key extends keyof TSelection ?
+                        InferSelectedReturnType<TField["fields"][Key], TSelection[Key]>
+                    /* If not, fall back to never */
+                    : never
+            } & (
+                /* Loop over each member of the interface and build a discriminated union */
+                {
+                    [TypeName in keyof TField["members"]]: 
+                        `... on ${string & TypeName}` extends keyof TSelection ?
+                            {
+                                [Key in keyof TField["members"][TypeName] & keyof TSelection[`... on ${string & TypeName}`]]:
+                                    InferSelectedReturnType<TField["members"][TypeName][Key], TSelection[`... on ${string & TypeName}`][Key]>
+                            }
+                        : never
+                }[keyof TField["members"]]
+            ),
+            TField
+        >
+
+    /**
+     * Check if the field is a union field
+     */
+    : TField extends UnionField ? 
+        ApplyModifiers<
+            /* Loop over each member of the union and build a discriminated union */
             {
                 [TypeName in keyof TField["members"]]: 
                     `... on ${string & TypeName}` extends keyof TSelection ?
@@ -165,39 +210,28 @@ export type InferSelectedReturnType<
                                 InferSelectedReturnType<TField["members"][TypeName][Key], TSelection[`... on ${string & TypeName}`][Key]>
                         }
                     : never
-            }[keyof TField["members"]]
-        )
-
-    /**
-     * Check if the field is a union field
-     */
-    : TField extends UnionField ? (
-        /* Loop over each member of the union and build a discriminated union */
-        {
-            [TypeName in keyof TField["members"]]: 
-                `... on ${string & TypeName}` extends keyof TSelection ?
-                    {
-                        [Key in keyof TField["members"][TypeName] & keyof TSelection[`... on ${string & TypeName}`]]:
-                            InferSelectedReturnType<TField["members"][TypeName][Key], TSelection[`... on ${string & TypeName}`][Key]>
-                    }
-                : never
-        }[keyof TField["members"]]
-    )
+            }[keyof TField["members"]],
+            TField
+        >
 
     /**
      * Check if the field is a basic field
      */
     : TField extends BasicField ?
         /* Check if the field is an object */
-        TField["baseType"] extends Record<string, BasicField | UnionField | InterfaceField> ? {
-            [Key in keyof TField["baseType"] as Key extends keyof TSelection ? Key : never]: 
-                // For each key of the object, call the generic recursively
-                InferSelectedReturnType<TField["baseType"][Key], TSelection[Key]>
-        }
+        TField["baseType"] extends Record<string, BasicField | UnionField | InterfaceField> ? 
+            ApplyModifiers<
+                {
+                    [Key in keyof TField["baseType"] as Key extends keyof TSelection ? Key : never]: 
+                        // For each key of the object, call the generic recursively
+                        InferSelectedReturnType<TField["baseType"][Key], TSelection[Key]>
+                },
+                TField
+            >
         /* Check if the field is a scalar */
         : TSelection extends true ? 
-            // If so, we have found a leaf that is selected, return the return type of the field
-            TField["baseType"]
+            // If so, we have found a leaf that is selected, apply modifiers to the return type
+            ApplyModifiers<TField["baseType"], TField>
         /* Invalid field, fall back to never */
         : never
 
