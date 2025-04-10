@@ -3,14 +3,18 @@
  */
 
 import { convertGraphQLType } from "./convert-type.js";
-import type { GraphQLArgument } from "graphql";
+import { isRequiredArgument, type GraphQLArgument } from "graphql";
 
 export function formatArguments(fieldArguments: readonly GraphQLArgument[]): string {
     const formattedArguments: string[] = [];
 
     for (const argument of fieldArguments) {
         const convertedType = convertGraphQLType(argument.type);
-        formattedArguments.push(`${argument.name}: ${convertedType.typescriptType}`);
+        const isRequiredType = isRequiredArgument(argument);
+
+        formattedArguments.push(
+            `${argument.name}${isRequiredType ? "" : "?"}: ${convertedType.typescriptType}`
+        );
     }
 
     if (formattedArguments.length) {
