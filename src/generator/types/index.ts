@@ -44,9 +44,8 @@ export function generateSchemaTypes(schema: GraphQLSchema) {
     }
 
     const fileHeaders = [
-        "/* File auto-generated using [graphql-flow](https://github.com/ecom-labs-hq/graphql-flow) */",
-        'import type * as BaseTypes from "./base-types.js";',
         'import type * as InputTypes from "./input-types.js";',
+        'import type * as BaseTypes from "./base-types.js";',
     ];
 
     return [...fileHeaders, ...generatedTypes].join("\n\n");
