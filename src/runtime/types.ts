@@ -23,7 +23,7 @@ export type UnwrapQueryArgs<TField extends BasicField | UnionField | InterfaceFi
 
 /* Infer the select type */
 export type BasicField = {
-    strippedType: unknown;
+    baseType: unknown;
     returnType: unknown;
     arguments: Record<string, unknown> | never;
 };
@@ -98,8 +98,8 @@ export type InferSelectType<TField extends BasicField | UnionField | InterfaceFi
         /* Check if the query does NOT take any arguments. For some reason this is the only way it works. */
         TField["arguments"] extends never ?
             // Check if the return-type is another field 
-            TField["strippedType"] extends Record<string, BasicField | UnionField | InterfaceField> ? {
-                [Key in keyof TField["strippedType"]]?: InferSelectType<TField["strippedType"][Key]>
+            TField["baseType"] extends Record<string, BasicField | UnionField | InterfaceField> ? {
+                [Key in keyof TField["baseType"]]?: InferSelectType<TField["baseType"][Key]>
             } 
             // If not, it means that it's a scalar. Return true 
             : true
@@ -107,8 +107,8 @@ export type InferSelectType<TField extends BasicField | UnionField | InterfaceFi
         /* If not, do the same thing but but wrap the types in QueryArgs */
         :
             // Check if the return-type is another field 
-            TField["strippedType"] extends Record<string, BasicField | UnionField | InterfaceField> ? QueryArgs<TField["arguments"], {
-                [Key in keyof TField["strippedType"]]?: InferSelectType<TField["strippedType"][Key]>
+            TField["baseType"] extends Record<string, BasicField | UnionField | InterfaceField> ? QueryArgs<TField["arguments"], {
+                [Key in keyof TField["baseType"]]?: InferSelectType<TField["baseType"][Key]>
             }>
             // If not, it means that it's a scalar. Return true 
             : QueryArgs<TField["arguments"], true>
@@ -181,10 +181,10 @@ export type InferSelectedReturnType<
      */
     : TField extends BasicField ?
         /* Check if the field is an object */
-        TField["strippedType"] extends Record<string, BasicField | UnionField | InterfaceField> ? {
-            [Key in keyof TField["strippedType"] as Key extends keyof TSelection ? Key : never]: 
+        TField["baseType"] extends Record<string, BasicField | UnionField | InterfaceField> ? {
+            [Key in keyof TField["baseType"] as Key extends keyof TSelection ? Key : never]: 
                 // For each key of the object, call the generic recursively
-                InferSelectedReturnType<TField["strippedType"][Key], TSelection[Key]>
+                InferSelectedReturnType<TField["baseType"][Key], TSelection[Key]>
         }
         /* Check if the field is a scalar */
         : TSelection extends true ? 

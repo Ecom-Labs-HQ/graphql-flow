@@ -11,32 +11,32 @@ export function convertGraphQLType(graphqlType: GraphQLOutputType | GraphQLInput
     let arrayIsNullable = true;
     let itemsAreNullable = true;
 
-    let strippedType = graphqlType;
+    let baseType = graphqlType;
 
-    if (isNonNullType(strippedType)) {
+    if (isNonNullType(baseType)) {
         arrayIsNullable = false;
-        strippedType = strippedType.ofType;
+        baseType = baseType.ofType;
     }
 
-    if (isListType(strippedType)) {
+    if (isListType(baseType)) {
         isArrayType = true;
-        strippedType = strippedType.ofType;
+        baseType = baseType.ofType;
 
-        if (isNonNullType(strippedType)) {
+        if (isNonNullType(baseType)) {
             itemsAreNullable = false;
-            strippedType = strippedType.ofType;
+            baseType = baseType.ofType;
         }
     }
 
-    if (isNonNullType(strippedType) || isListType(strippedType)) {
+    if (isNonNullType(baseType) || isListType(baseType)) {
         throw new Error("Failed to correctly strip type of modifiers in previous step");
     }
 
-    let typescriptType = strippedType.toString();
+    let typescriptType = baseType.toString();
     typescriptType =
-        isScalarType(strippedType) || isEnumType(strippedType)
+        isScalarType(baseType) || isEnumType(baseType)
             ? `BaseTypes.${typescriptType}`
-            : isInputType(strippedType)
+            : isInputType(baseType)
               ? `InputTypes.${typescriptType}`
               : typescriptType;
 
@@ -49,10 +49,8 @@ export function convertGraphQLType(graphqlType: GraphQLOutputType | GraphQLInput
     }
 
     return {
-        strippedType:
-            isScalarType(strippedType) || isEnumType(strippedType)
-                ? `BaseTypes.${strippedType}`
-                : strippedType,
+        baseType:
+            isScalarType(baseType) || isEnumType(baseType) ? `BaseTypes.${baseType}` : baseType,
         typescriptType,
     };
 }
