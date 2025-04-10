@@ -24,19 +24,27 @@ export type UnwrapQueryArgs<TField extends BasicField | UnionField | InterfaceFi
 /* Infer the select type */
 export type BasicField = {
     baseType: unknown;
-    returnType: unknown;
     arguments: Record<string, unknown> | never;
+    isArray: boolean;
+    itemsAreNullable: boolean;
+    isNullable: boolean;
 };
 
 export type UnionField = {
     members: Record<string, Record<string, BasicField | UnionField | InterfaceField>>;
     arguments: Record<string, unknown> | never;
+    isArray: boolean;
+    itemsAreNullable: boolean;
+    isNullable: boolean;
 };
 
 export type InterfaceField = {
     members: Record<string, Record<string, BasicField | UnionField | InterfaceField>>;
     fields: Record<string, BasicField | UnionField | InterfaceField>;
     arguments: Record<string, unknown> | never;
+    isArray: boolean;
+    itemsAreNullable: boolean;
+    isNullable: boolean;
 };
 
 /**
@@ -189,7 +197,7 @@ export type InferSelectedReturnType<
         /* Check if the field is a scalar */
         : TSelection extends true ? 
             // If so, we have found a leaf that is selected, return the return type of the field
-            TField["returnType"]
+            TField["baseType"]
         /* Invalid field, fall back to never */
         : never
 

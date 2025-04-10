@@ -13,7 +13,7 @@ export function formatArguments(fieldArguments: readonly GraphQLArgument[]): str
         const isRequiredType = isRequiredArgument(argument);
 
         formattedArguments.push(
-            `${argument.name}${isRequiredType ? "" : "?"}: ${convertedType.typescriptType}`
+            `${argument.name}${isRequiredType ? "" : "?"}: ${convertedType.inputType}`
         );
     }
 
