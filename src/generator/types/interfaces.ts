@@ -10,16 +10,19 @@
 
 import { generateFieldType } from "./field-types.js";
 import { generateTypeComment } from "../utils/generate-comment.js";
-import type { GraphQLInterfaceType } from "graphql";
+import type { GraphQLInterfaceType, GraphQLSchema } from "graphql";
 
-export function generateInterfaceType(interfaceType: GraphQLInterfaceType): string {
+export function generateInterfaceType(
+    schema: GraphQLSchema,
+    interfaceType: GraphQLInterfaceType
+): string {
     const typeName = interfaceType.name;
 
     const implementedInterfaces = interfaceType.getInterfaces();
     const fields = interfaceType.getFields();
 
     const fieldDefinitions = Object.values(fields).map((field) => {
-        const tsType = generateFieldType(field.type);
+        const tsType = generateFieldType(schema, field);
 
         const fieldComment = generateTypeComment(field.description);
         const fieldDefinition = `${field.name}: ${tsType}`;

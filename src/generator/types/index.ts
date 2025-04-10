@@ -3,20 +3,10 @@
  */
 
 import { generateObjectType } from "./objects.js";
-import { generateInputObjectType } from "./input-object.js";
 import { generateInterfaceType } from "./interfaces.js";
 import { generateUnionType } from "./unions.js";
-import { generateEnumType } from "./enums.js";
-import { generateScalarType } from "./scalars.js";
 
-import {
-    isEnumType,
-    isInputObjectType,
-    isInterfaceType,
-    isObjectType,
-    isScalarType,
-    isUnionType,
-} from "graphql";
+import { isInterfaceType, isObjectType, isUnionType } from "graphql";
 import type { GraphQLSchema } from "graphql";
 
 export function generateSchemaTypes(schema: GraphQLSchema) {
@@ -32,29 +22,31 @@ export function generateSchemaTypes(schema: GraphQLSchema) {
         }
 
         if (isObjectType(graphqlType)) {
-            const generatedObjectType = generateObjectType(graphqlType);
+            const generatedObjectType = generateObjectType(schema, graphqlType);
             generatedTypes.push(generatedObjectType);
-        } else if (isInputObjectType(graphqlType)) {
-            const generatedInputObjectType = generateInputObjectType(graphqlType);
-            generatedTypes.push(generatedInputObjectType);
-        } else if (isInterfaceType(graphqlType)) {
-            const generatedInterfaceType = generateInterfaceType(graphqlType);
+
+            continue;
+        }
+
+        if (isInterfaceType(graphqlType)) {
+            const generatedInterfaceType = generateInterfaceType(schema, graphqlType);
             generatedTypes.push(generatedInterfaceType);
-        } else if (isUnionType(graphqlType)) {
+
+            continue;
+        }
+
+        if (isUnionType(graphqlType)) {
             const generatedUnionType = generateUnionType(graphqlType);
             generatedTypes.push(generatedUnionType);
-        } else if (isEnumType(graphqlType)) {
-            const generatedEnumType = generateEnumType(graphqlType);
-            generatedTypes.push(generatedEnumType);
-        } else if (isScalarType(graphqlType)) {
-            const inlineType = `export type ${typeName} = ${generateScalarType(graphqlType)}`;
-            generatedTypes.push(inlineType);
+
+            continue;
         }
     }
 
     const fileHeaders = [
         "/* File auto-generated using [graphql-flow](https://github.com/ecom-labs-hq/graphql-flow) */",
-        "/* eslint-disable @typescript-eslint/no-explicit-any */",
+        'import type * as BaseTypes from "./base-types.js";',
+        'import type * as InputTypes from "./input-types.js";',
     ];
 
     return [...fileHeaders, ...generatedTypes].join("\n\n");
