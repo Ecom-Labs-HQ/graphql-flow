@@ -147,35 +147,35 @@ export type InferSelectedReturnType<
                     InferSelectedReturnType<TField["fields"][Key], TSelection[Key]>
                 /* If not, fall back to never */
                 : never
-        } & {
-            /* Loop over each member of the union and check if it is found in TSelection, i.e. if the member is selected */
-            [TypeName in keyof TField["members"] as `... on ${string & TypeName}` extends keyof TSelection ? TypeName : never]: 
-                /* Double-check that it is a key of TSelection */
-                `... on ${string & TypeName}` extends keyof TSelection ? {
-                    /* Loop over each key of the union member, intersected with the TSelection keys (to guarantee that the key exists in both) */
-                    [Key in keyof TField["members"][TypeName] & keyof TSelection[`... on ${string & TypeName}`]]: 
-                        InferSelectedReturnType<TField["members"][TypeName][Key], TSelection[`... on ${string & TypeName}`][Key]>
-                }
-                /* If not, fall back to never */
-                : never
-        }
+        } & (
+            /* Loop over each member of the interface and build a discriminated union */
+            {
+                [TypeName in keyof TField["members"]]: 
+                    `... on ${string & TypeName}` extends keyof TSelection ?
+                        {
+                            [Key in keyof TField["members"][TypeName] & keyof TSelection[`... on ${string & TypeName}`]]:
+                                InferSelectedReturnType<TField["members"][TypeName][Key], TSelection[`... on ${string & TypeName}`][Key]>
+                        }
+                    : never
+            }[keyof TField["members"]]
+        )
 
     /**
      * Check if the field is a union field
      */
-    : TField extends UnionField ? {
-        /* Loop over each member of the union and check if it is found in TSelection, i.e. if the member is selected */
-        [TypeName in keyof TField["members"] as `... on ${string & TypeName}` extends keyof TSelection ? TypeName : never]: 
-            /* Double-check that it is a key of TSelection */
-            `... on ${string & TypeName}` extends keyof TSelection ? {
-                /* Loop over each key of the union member, intersected with the TSelection keys (to guarantee that the key exists in both) */
-                [Key in keyof TField["members"][TypeName] & keyof TSelection[`... on ${string & TypeName}`]]: 
-                    InferSelectedReturnType<TField["members"][TypeName][Key], TSelection[`... on ${string & TypeName}`][Key]>
-              }
-            /* If not, fall back to never */
-            : never
-        }
-    
+    : TField extends UnionField ? (
+        /* Loop over each member of the union and build a discriminated union */
+        {
+            [TypeName in keyof TField["members"]]: 
+                `... on ${string & TypeName}` extends keyof TSelection ?
+                    {
+                        [Key in keyof TField["members"][TypeName] & keyof TSelection[`... on ${string & TypeName}`]]:
+                            InferSelectedReturnType<TField["members"][TypeName][Key], TSelection[`... on ${string & TypeName}`][Key]>
+                    }
+                : never
+        }[keyof TField["members"]]
+    )
+
     /**
      * Check if the field is a basic field
      */
