@@ -9,6 +9,7 @@
 
 import { generateFieldType } from "./field-types.js";
 import { generateTypeComment } from "../utils/generate-comment.js";
+import { generateTypename } from "../utils/generate-typename.js";
 import type { GraphQLObjectType, GraphQLSchema } from "graphql";
 
 export function generateObjectType(schema: GraphQLSchema, objectType: GraphQLObjectType): string {
@@ -25,6 +26,8 @@ export function generateObjectType(schema: GraphQLSchema, objectType: GraphQLObj
 
         return `${fieldComment}\n${fieldDefinition}`;
     });
+
+    fieldDefinitions.push(`__typename: ${generateTypename(objectType.name)}`);
 
     const interfaceExtensions =
         implementedInterfaces.length > 0
